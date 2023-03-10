@@ -134,8 +134,8 @@ A
 b<-A%*%rep(1,times=n)
 b
 
-#solve(A,b)              #No es capaz de resolverlo pues A está muy cerca de ser singular
+#x<-solve(A,b)              #No es capaz de resolverlo pues A está muy cerca de ser singular
 cA<-rcond(A)
-x<-solve(A,b,tol=cA)     #Pero podemos usar solve con tolerancia para calcular   
+x<-solve(A,b,tol=cA)        #Pero podemos usar solve con tolerancia para calcular   
 x
 max(abs(x-1))
