@@ -19,6 +19,7 @@ res$par
 res
 
 #----------------------------------------------------------------------------------
+install.packages("truncnorm")
 install.packages("Rsolnp")
 library(Rsolnp)
 
@@ -109,6 +110,30 @@ cuartiles<-function(x){
   
   x<-x[!is.na(x)]
   Q2 <- mediana(x)
+  n <- length(x)
 
+  p1 = floor((n+1)/4)
+  a1 = (n+1)/4-p1
+  Q1 = x[p1]+a1*(x[p1+1]-x[p1])
+  
+  p3 = floor(3*(n+1)/4)
+  a3 = 3*(n+1)/4-p3
+  Q3 = x[p3]+a3*(x[p3+1]-x[p3])
+  
+  return(list(Q1=Q1, Q2=Q2, Q3=Q3 ))
 }
+
+cuartiles(1:9)
+cuartiles(1:10)
+
+#----------------------------------------------------------------------------------
+#b)
+#No hay un concenso sobre cómo hay que calcular los cuantiles, parece ser que el algoritmo nº6 de entre los 9 que hay 
+#definidos en quantile coincide con el nuestro
+
+quantile(1:9, probs = c(0.25, 0.5, 0.75) )
+quantile(1:9, probs = c(0.25, 0.5, 0.75), type=6 )
+
+quantile(1:10, probs = c(0.25, 0.5, 0.75) )
+quantile(1:10, probs = c(0.25, 0.5, 0.75), type=6 )
 
