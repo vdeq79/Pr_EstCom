@@ -1,7 +1,7 @@
 #Autor: XuSheng Zheng
 
 #----------------------------------------------------------------------------------
-
+#Ejercicio propuesto
 dif.eq <- function(x1,r,n){
   v <- x1
   for(i in 1:(n-1))
@@ -34,5 +34,5 @@ dif.eq2 <- function(x1,r){
   return( list(v=v, n=i-1) )
 }
 
-a<-dif.eq2(0.95, 2.99)
-a
+dif.eq2(0.95, 2.99)
+
