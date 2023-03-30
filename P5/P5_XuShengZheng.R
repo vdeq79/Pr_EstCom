@@ -1,44 +1,139 @@
 #Autor: XuSheng Zheng
 
 #----------------------------------------------------------------------------------
-#Optimización directa
-muestra<-scan(text = 
-"0.97 1.01 1.06 0.99 1.13 1.08 0.98 0.93 1.03 0.97
-0.83 1.07 1.06 0.49 0.84 1.07 1.01 0.81 1.01 0.90
-0.93 0.98 1.01 0.77 0.90 0.93 0.88 1.08 1.03 1.09
-0.88 0.91 0.89 0.98 0.91 0.90 0.85 0.91 0.90 0.81
-1.01 0.91 1.00 1.04 0.81 0.86 0.94 0.69 1.01 0.86")
+muestra<-scan()
 
-logl<-function(theta){
+logl<-function(theta)
+{
   a<-theta[1]
-  rho<-theta[2]
-  
-  #dweibull es la función de densidad de la distribución Weibull
-  l<-sum(log(dweibull(x = muestra, shape = a, scale = rho)))
+  b<-theta[2]
+  l<-sum(log(dgamma(x=muestra,shape=a,scale=b)))
   return(-l)
 }
 
-#Elegimos valores iniciales arbitrarios
-r0<-a0<-1
-res<-optim(par=c(a0,r0),fn=logl)
+logl(c(1,1))
+
+b0<-a0<-1
+res<-optim(par=c(a0,b0),fn=logl)
 res$par
-
-#Ha necesitado 103 llamadas a la función
-res$counts
+res
 
 #----------------------------------------------------------------------------------
-#Resolución de las ecuaciones normales
-f<-function(a) sum(muestra^a*log(muestra))/sum(muestra^a)-1/a-mean(log(muestra))
+install.packages("truncnorm")
+install.packages("Rsolnp")
+library(Rsolnp)
+
+res<-NULL
+res<-solnp(pars=c(a0,b0),fun=logl,LB=c(0,0))
+res$pars
+
+res<-NULL
+a0<-var(muestra)/mean(muestra)
+b0<-mean(muestra)/a0
+res<-solnp(pars=c(a0,b0),fun=logl,LB=c(0,0))
+res$pars
+
+#----------------------------------------------------------------------------------
+install.packages("maxLik")
+library(maxLik)
+
+logl2<-function(theta) -logl(theta)
+maxLik(logl2,start=c(1,1))
+
+a0<-var(muestra)/mean(muestra)
+b0<-mean(muestra)/a0
+maxLik(logl2,start=c(a0,b0))
+
+A<-matrix(c(1,0,0,1),2)
+B<-c(0,0)
+maxLik(logl2,start=c(1,1),constraints=list(ineqA=A,ineqB=B))
+
+#----------------------------------------------------------------------------------
+f<-function(a) log(a)-digamma(a)- log(mean(muestra))+mean(log(muestra))
 res<-uniroot(f,c(0.1,100))
-a<-res$root
-rho<-mean(muestra^a)^(1/a)
-a;rho
+res
+b<-mean(muestra)/res$root
+b
 
 #----------------------------------------------------------------------------------
-#Usando fitdist 
-#install.packages("fitdistrplus")
-library(fitdistrplus)
-#fitdistr reconece la distribución Weibull
-fitdistr(muestra, "weibull")
+#Ejercicio 1
+medias <- function(x){
+  if(!is.numeric(x))
+    stop("El argumento debe ser numérico")
+  
+  x<-x[!is.na(x)]
+  geo<-if(min(x)>0) exp(mean(log(x))) else if (min(x)==0) 0 else NA
+  arm<-if(all(x!=0)) 1/mean(1/x) else NA
+  
+  if(is.na(geo))
+    warning("No se ha podido calcular la media geométrica")
+  
+  if(is.na(arm))
+    warning("No se ha podido calcular la media armónica")
+  
+  return(list(media.aritmética=mean(x), media.geométrica=geo, media.armónica=arm))
+}
+medias(1:10)
+medias(c(1:10, NA))
+medias(0:10)
+medias(-1:10)
 
-#Los resultados con los 3 métodos son parecidos con ligeras diferencias
+#----------------------------------------------------------------------------------
+#Ejercicio 2
+mediana<-function(x){
+  if(!is.numeric(x))
+    stop("El argumento debe ser numérico")
+  
+  x<-x[!is.na(x)]
+  x<-sort(x)
+  
+  n<-length(x)
+  mediana <- x[n%/%2+1]
+  if(n%%2==0)
+    mediana <- (mediana+x[n/2])/2
+  
+  return(mediana)
+}
+
+mediana(1:5)
+mediana(1:6)
+mediana(c(1:6,NA))
+mediana("hola")
+
+#----------------------------------------------------------------------------------
+#Ejercicio 3
+#----------------------------------------------------------------------------------
+#a)
+cuartiles<-function(x){
+  if(!is.numeric(x))
+    stop("El argumento debe ser numérico")
+  
+  x<-x[!is.na(x)]
+  Q2 <- mediana(x)
+  n <- length(x)
+
+  p1 = floor((n+1)/4)
+  a1 = (n+1)/4-p1
+  Q1 = x[p1]+a1*(x[p1+1]-x[p1])
+  
+  p3 = floor(3*(n+1)/4)
+  a3 = 3*(n+1)/4-p3
+  Q3 = x[p3]+a3*(x[p3+1]-x[p3])
+  
+  return(list(Q1=Q1, Q2=Q2, Q3=Q3 ))
+}
+
+cuartiles(1:9)
+cuartiles(1:10)
+
+#----------------------------------------------------------------------------------
+#b)
+#No hay un concenso sobre cómo hay que calcular los cuantiles, parece ser que el algoritmo nº6 de entre los 9 que hay 
+#definidos en quantile coincide con el nuestro
+
+quantile(1:9, probs = c(0.25, 0.5, 0.75) )
+quantile(1:9, probs = c(0.25, 0.5, 0.75), type=6 )
+
+quantile(1:10, probs = c(0.25, 0.5, 0.75) )
+quantile(1:10, probs = c(0.25, 0.5, 0.75), type=6 )
+
