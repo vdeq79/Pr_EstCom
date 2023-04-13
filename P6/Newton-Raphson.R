@@ -52,5 +52,58 @@ algoritmo.NR<-function(f, f.prima, x0, tol, nmax, dibuja=TRUE){
   return(list(raiz=xn, nivel_tol = abs(xn-ant), niter=n ))  
 }
 
-algoritmo.NR(f,f.prima,0,0.001,100)
+algoritmo.NR(f,f.prima,2,0.001,100)
 
+
+install.packages("numDeriv")
+library(numDeriv)
+
+algoritmo2.NR<-function(f, f.prima, x0, tol, nmax, dibuja=TRUE){
+  
+    if (missing(f.prima))
+      f.prima<-function(x) genD(func=f, x=x)$D[1] 
+  
+    if(!is.function(f) | !is.function(f.prima))
+    stop('Los dos primeros argumentos deben ser funciones')
+  
+  if(dibuja){
+    curve(f,x0-5,x0+5)
+    abline(h=0,col=2)
+  }
+  
+  xn<-x0
+  for (n in 1:nmax){
+    ant <- xn
+    xn <- ant-f(ant)/f.prima(ant)
+    
+    print(xn)
+    if(abs(xn-ant)<tol | is.nan(xn) | is.na(xn) ) break
+  }
+  
+  if (n==nmax)
+    warning('Se ha alcanzado el máximo de iteraciones')
+  
+  return(list(raiz=xn, nivel_tol = abs(xn-ant), niter=n ))  
+}
+
+f<-function(x) x^2-5
+f.prima <- function(x) 2*x
+algoritmo.NR(f,f.prima,2,0.001,100)
+algoritmo2.NR(f,x0=2,tol=0.001,nmax=100)
+uniroot(f,c(0,5))
+
+f<-function(x) x^3-2*x-5
+f.prima <- function(x) 3*x^2-2
+algoritmo.NR(f,f.prima,2,0.001,100)
+algoritmo2.NR(f,x0=2,tol=0.001,nmax=100)
+uniroot(f,c(0,5))
+
+
+f<-function(x) exp(2*x)-x-6
+f.prima <- function(x) exp(2*x)*2-1
+algoritmo.NR(f,f.prima,2,0.001,100)
+algoritmo2.NR(f,x0=2,tol=0.001,nmax=100)
+uniroot(f,c(0,5))
+
+
+  
