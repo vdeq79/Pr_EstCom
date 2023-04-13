@@ -3,9 +3,10 @@
 #----------------------------------------------------------------------------------
 #Ejercicio propuesto
 dif.eq <- function(x1,r,n){
-  v <- x1
+  v <- vector("numeric",n)
+  v[1] <- x1
   for(i in 1:(n-1))
-    v<-c(v,r*v[i]*(1-v[i]))
+    v[i+1]<-r*v[i]*(1-v[i])
     
   return(v)
 }
@@ -27,7 +28,7 @@ dif.eq2 <- function(x1,r){
   i <- 2
   
   while ( abs(v[i]-v[i-1])>=0.02 ){
-    v<-c(v,r*v[i]*(1-v[i]))
+    v[i+1]<-r*v[i]*(1-v[i])
     i <- i+1
   }
     
@@ -35,4 +36,3 @@ dif.eq2 <- function(x1,r){
 }
 
 dif.eq2(0.95, 2.99)
-
