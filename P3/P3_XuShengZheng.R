@@ -55,8 +55,13 @@ n
 
 #----------------------------------------------------------------------------------
 #b)
+mean(rep(datos[,1],datos[,3]))
 mx<-sum(datos[1]*datos[3])/n; mx
 my<-sum(datos[2]*datos[3])/n; my
+
+var(rep(datos[,1],datos[,3]))
+var(rep(datos[,2],datos[,3]))
+
 sx2<-sum(datos[3]*(datos[1]-mx)^2)/(n-1); sx2
 sy2<-sum(datos[3]*(datos[2]-my)^2)/(n-1); sy2
 
@@ -80,9 +85,10 @@ var(datos2[,3])
 mean(datos2[,4])
 var(datos2[,4])
 
+#within invierte el orden, el último es la primera columna a añadir
 datos3<-within(datos.n,{
-  xzi<-(xi-mx)/sqrt(sx2) 
   yzi<-(yi-my)/sqrt(sy2)
+  xzi<-(xi-mx)/sqrt(sx2) 
 })
 mean(datos3[,3])
 var(datos3[,3])
