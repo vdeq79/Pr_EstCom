@@ -1,3 +1,6 @@
+# Título: Práctica 10
+# Autor: XuSheng Zheng
+
 ### Aproximación de una probabilidad
 ```{r }
 nsim<-1000
@@ -54,8 +57,14 @@ lines(estim + z*estim.err,col='blue',lwd=2,lty=3)
 
 ### Aproximación de una integral
 $I1=\int_{0.2}^{0.4}f(x)=\int I(0.2<x<0.4)f(x)\,dx$
+
+
 $I2=\int sin(x)e^{-x}f(x)\,dx$
+
+
 siendo
+
+
 $f(x)=\dfrac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1},\; 0\leq x\leq1$
 
 
@@ -72,7 +81,7 @@ curve(f2(x),0,1)
 ```{r }
 nsim<-1000
 set.seed(1)
-X<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
+x<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
 #La integral es la probabilidad de 0.2<x<0.4 con x una variable aleatoria con distribución Beta
 r1<-(0.2<x) & (x<0.4) 
 I1<-mean(r1)
@@ -100,7 +109,7 @@ integrate(f1,0.2,0.4)
 ```{r }
 nsim<-1000
 set.seed(1)
-X<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
+x<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
 #Análogamente I2 es la esperanza de sin(x)*e^(-x) con x una variable aleatoria con distribución Beta
 r2<-sin(x)*exp(-x) 
 I2<-mean(r2)

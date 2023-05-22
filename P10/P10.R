@@ -61,7 +61,7 @@ curve(f2(x),0,1)
 #----------------------------------------------------------------
 nsim<-1000
 set.seed(1)
-X<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
+x<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
 #La integral es la probabilidad de 0.2<x<0.4 con x una variable aleatoria con distribución Beta
 r1<-(0.2<x) & (x<0.4) 
 I1<-mean(r1)
@@ -87,7 +87,7 @@ integrate(f1,0.2,0.4)
 #----------------------------------------------------------------
 nsim<-1000
 set.seed(1)
-X<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
+x<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
 #Análogamente I2 es la esperanza de sin(x)*e^(-x) con x una variable aleatoria con distribución Beta
 r2<-sin(x)*exp(-x) 
 I2<-mean(r2)
