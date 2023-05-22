@@ -1,0 +1,143 @@
+#Tarea 1
+nsim<-1000
+set.seed(1)
+x<-runif(nsim,-1,1)
+y<-runif(nsim,-1,1)
+suceso<-(x+y<=0)
+
+mean(suceso)
+
+sd(suceso)/sqrt(nsim)
+
+estim<-cumsum(suceso)/(1:nsim)
+estim.err<-sqrt(cumsum((suceso-estim)^2))/(1:nsim)
+
+
+plot(1:nsim,estim,type='l',ylab='Aproximación y límites de error',
+     xlab='Número de simulaciones',main=expression(P(X+Y<=0)),
+     ylim=c(0,1))
+
+z<-qnorm(0.025,lower.tail = FALSE)
+
+lines(estim - z*estim.err,col='blue',lwd=2,lty=3)
+lines(estim + z*estim.err,col='blue',lwd=2,lty=3)
+
+
+#--------------------------------------------------------------
+nsim<-1000
+set.seed(1)
+x<-runif(nsim,-1,1)
+y<-runif(nsim,-1,1)
+suceso<-(x^2+y^2<=1)
+
+pr<-mean(suceso)
+pr
+abs(pr-pi/4)
+
+sd(suceso)/sqrt(nsim)
+
+estim<-cumsum(suceso)/(1:nsim)
+estim.err<-sqrt(cumsum((suceso-estim)^2))/(1:nsim)
+
+
+plot(1:nsim,estim,type='l',ylab='Aproximación y límites de error',
+     xlab='Número de simulaciones',main=expression(P(X^2+Y^2<=1)),
+     ylim=c(0,1))
+
+z<-qnorm(0.025,lower.tail = FALSE)
+
+lines(estim - z*estim.err,col='blue',lwd=2,lty=3)
+lines(estim + z*estim.err,col='blue',lwd=2,lty=3)
+
+
+#Tarea 2
+#----------------------------------------------------------------
+f1<- function(x) dbeta(x,2.5,5)
+curve(f1(x),0.2,0.4)
+
+f2<- function(x) sin(x)*exp(-x)*dbeta(x,2.5,5)
+curve(f2(x),0,1)
+
+#----------------------------------------------------------------
+nsim<-1000
+set.seed(1)
+X<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
+#La integral es la probabilidad de 0.2<x<0.4 con x una variable aleatoria con distribución Beta
+r1<-(0.2<x) & (x<0.4) 
+I1<-mean(r1)
+I1
+
+sd(r1)/sqrt(nsim)
+estim<-cumsum(r1)/(1:nsim)
+estim.err<-sqrt(cumsum((r1-estim)^2))/(1:nsim)
+
+plot(1:nsim,estim,type='l',ylab='Aproximación y límites de error',
+     xlab='Número de simulaciones',main=expression(I1),
+     ylim=c(0,1))
+
+z<-qnorm(0.025,lower.tail = FALSE)
+
+lines(estim - z*estim.err,col='blue',lwd=2,lty=3)
+lines(estim + z*estim.err,col='blue',lwd=2,lty=3)
+
+estim[nsim]
+estim.err[nsim]
+integrate(f1,0.2,0.4)
+
+#----------------------------------------------------------------
+nsim<-1000
+set.seed(1)
+X<-rbeta(nsim,shape1 = 2.5, shape2 = 5)
+#Análogamente I2 es la esperanza de sin(x)*e^(-x) con x una variable aleatoria con distribución Beta
+r2<-sin(x)*exp(-x) 
+I2<-mean(r2)
+I2
+
+sd(r2)/sqrt(nsim)
+estim<-cumsum(r2)/(1:nsim)
+estim.err<-sqrt(cumsum((r2-estim)^2))/(1:nsim)
+
+plot(1:nsim,estim,type='l',ylab='Aproximación y límites de error',
+     xlab='Número de simulaciones',main=expression(I2),
+     ylim=c(0,1))
+
+z<-qnorm(0.025,lower.tail = FALSE)
+
+lines(estim - z*estim.err,col='blue',lwd=2,lty=3)
+lines(estim + z*estim.err,col='blue',lwd=2,lty=3)
+
+estim[nsim]
+estim.err[nsim]
+integrate(f2,-Inf,Inf)
+
+
+#Tarea 3
+#----------------------------------------------------------------
+mu<-3.5
+sig<-1.1
+
+EX<-exp(mu+sig^2/2); EX
+VX<- EX^2*(exp(sig^2)-1) ; VX
+
+lam<-17
+ES<-lam*EX; ES
+VS<-lam*VX+lam*EX^2; VS
+
+#----------------------------------------------------------------
+nsim<-5000
+S<-double(nsim)
+set.seed(1)
+
+for (i in 1:nsim){
+  n <- rpois(1,lam)
+  if (n>0) S[i] <- sum(rlnorm(n,mu,sig))
+}
+
+hist(S,xlim=c(0,7000),breaks=20,prob=TRUE, ylim=c(0,1.2e-3))
+lines(density(S),col="red")
+
+mean(S)
+var(S)
+
+quantile(S, 0.995)
+qnorm(0.995, mean=ES, sd=sqrt(VS) )
