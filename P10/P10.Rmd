@@ -2,30 +2,6 @@
 # Autor: XuSheng Zheng
 
 ### Aproximación de una probabilidad
-```{r }
-nsim<-1000
-set.seed(1)
-x<-runif(nsim,-1,1)
-y<-runif(nsim,-1,1)
-suceso<-(x+y<=0)
-
-mean(suceso)
-
-sd(suceso)/sqrt(nsim)
-
-estim<-cumsum(suceso)/(1:nsim)
-estim.err<-sqrt(cumsum((suceso-estim)^2))/(1:nsim)
-
-
-plot(1:nsim,estim,type='l',ylab='Aproximación y límites de error',
-     xlab='Número de simulaciones',main=expression(P(X+Y<=0)),
-     ylim=c(0,1))
-
-z<-qnorm(0.025,lower.tail = FALSE)
-
-lines(estim - z*estim.err,col='blue',lwd=2,lty=3)
-lines(estim + z*estim.err,col='blue',lwd=2,lty=3)
-```
 
 **Aproximación de $P(X^2+Y^2\leq 1)$**
 ```{r }
