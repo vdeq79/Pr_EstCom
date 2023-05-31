@@ -1,0 +1,110 @@
+---
+title: "Repaso temas 4y5"
+output: html_document
+date: "2023-05-31"
+---
+
+# Ejercicio 1
+```{r}
+set.seed(1)
+y<-rchisq(50,30)
+x<-rnorm(50,30,5)
+
+mean(y); sd(y); quantile(y,0.75)
+```
+
+```{r}
+hist(y, freq=FALSE, ylim=c(0, 0.1))
+curve(dnorm(x,mean=mean(y),sd=sd(y)),add=TRUE,col='blue')
+```
+
+```{r}
+qqnorm(y)
+```
+
+
+```{r}
+boxplot(y)
+```
+
+```{r}
+boxplot(x,y, names = c('x', 'y'))
+```
+
+```{r}
+plot(x, y)
+```
+
+```{r}
+modelo<-lm(y~x)
+plot(x, y)
+abline(modelo)
+```
+
+# Ejercicio 2
+```{r}
+apuesta<-function(n=4){
+  sum(sample(1:6,n,replace = TRUE)==6) >0
+}
+
+apuesta(10)
+```
+
+
+```{r}
+nsim <- 10000
+result <- replicate(nsim, apuesta())
+mean(result)
+1-(5/6)^4
+```
+
+# Ejercicio 3
+```{r}
+nsim <- 1000
+a <- 5
+b <- 4
+
+u <- runif(nsim)
+x <- b/( (u)^(1/a) )
+
+pareto <- function(x,a,b){
+  return((a*b^a)/(x^(a+1)))
+}
+
+paretodist <- function(x,a,b){
+    return((1-(b/x)^a)*(x >= b))
+}
+
+hist(x, freq=FALSE, ylim=c(0,0.8))
+lines(density(x), col="blue")
+curve(pareto(x,a,b), col="red", add=TRUE)
+
+```
+```{r}
+ks.test(x,paretodist, a=a,b=b)
+```
+
+# Ejercicio 4
+```{r}
+h<-function(x) 1/(1+x^2)
+nsim<-1000
+set.seed(1)
+x<-runif(nsim)
+hx<-sapply(x,h)
+mean(hx)
+estim<-cumsum(hx)/(1:nsim)
+estim.err<-sqrt(cumsum((hx-estim)^2))/(1:nsim)
+
+plot(1:nsim,estim,type='l',ylab='Aproximación y límites de error',
+     xlab='Número de simulaciones',main=expression(I1),
+     ylim=c(0,1))
+
+z<-qnorm(0.025,lower.tail = FALSE)
+
+lines(estim - z*estim.err,col='blue',lwd=2,lty=3)
+lines(estim + z*estim.err,col='blue',lwd=2,lty=3)
+abline(h=pi/4,col=2)
+
+estim[nsim]
+estim.err[nsim]
+```
